@@ -4,6 +4,7 @@ const ProductController = require("../controllers/ProductController");
 
 
 ProductRoutes.get("/",ProductController.HomePage)
+ProductRoutes.post("/",ProductController.HomePage)
 
 
 
