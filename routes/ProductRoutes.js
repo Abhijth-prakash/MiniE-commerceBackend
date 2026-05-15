@@ -5,7 +5,7 @@ const upload = require('../multer/multerConfig')
 
 
 //setting static folder for images
-ProductRoutes.use('/uploads', express.static('uploads'));
+ProductRoutes.use('/public/productImages', express.static('public/productImages'))
 
 ProductRoutes.get("/",ProductController.HomePage)
 ProductRoutes.post("/add",upload.single('image'),ProductController.AddProducts)
