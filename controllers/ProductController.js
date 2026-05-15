@@ -23,9 +23,9 @@ const AddProducts = async (req,res)=>{
     });
 
     const ProductData =  await Product.save()
-    res.status(201).json({message:"success"})
+    res.status(201).json({message:"success",product:ProductData})
     } catch(error){
-        res.status(500).json({message:error.message})
+        res.status(500).json({message:error.message,})
     }
 
 }
