@@ -5,14 +5,20 @@ const Products = require('../models/productModel')
 const HomePage = async (req, res) => {
     try {
 
-        //number of pages and limiting
+        //number of pages && limiting && search
         let page = Number(req.query.page) || 1
         let limit = Number(req.query.limit) || 6
+        let search = req.query.search
         let skip = (page -1) * limit
-        
+
+        const query = {}
+        if(search) query.name = { $regex: search, $options: 'i' }
+
         //counting total data for frontend
-        const total = await Products.countDocuments()
-        const ProductData = await Products.find().skip(skip).limit(limit)
+        const total = await Products.countDocuments(query)
+
+        //query for search && skiping && limiting
+       const ProductData = await Products.find(query).skip(skip).limit(limit)
         
         res.json({ "products": ProductData,  pagination: {
         page,
