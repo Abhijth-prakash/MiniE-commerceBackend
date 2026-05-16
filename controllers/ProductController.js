@@ -4,8 +4,21 @@ const Products = require('../models/productModel')
 //this is the home page
 const HomePage = async (req, res) => {
     try {
-        const ProductData = await Products.find({})
-        res.json({ "products": ProductData })  
+
+        //number of pages and limiting
+        let page = Number(req.query.page) || 1
+        let limit = Number(req.query.limit) || 6
+        let skip = (page -1) * limit
+        
+        //counting total data for frontend
+        const total = await Products.countDocuments()
+        const ProductData = await Products.find().skip(skip).limit(limit)
+        
+        res.json({ "products": ProductData,  pagination: {
+        page,
+        pages: Math.ceil(total / limit),
+        total
+    } })  
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
