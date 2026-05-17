@@ -9,16 +9,28 @@ const HomePage = async (req, res) => {
         let page = Number(req.query.page) || 1
         let limit = Number(req.query.limit) || 6
         let search = req.query.search
+        let filter = req.query.filter
+        let sort = req.query.sort
         let skip = (page -1) * limit
 
         const query = {}
         if(search) query.name = { $regex: search, $options: 'i' }
+        if(filter) query.category = filter
 
+        //sorting
+        const sortQuery ={}
+        if(sort){
+            if(sort ==="low"){
+                sortQuery.price = 1
+            }else if(sort === "high"){
+                sortQuery.price = -1
+            }
+        }
         //counting total data for frontend
         const total = await Products.countDocuments(query)
 
         //query for search && skiping && limiting
-       const ProductData = await Products.find(query).skip(skip).limit(limit)
+       const ProductData = await Products.find(query).skip(skip).limit(limit).sort(sortQuery)
         
         res.json({ "products": ProductData,  pagination: {
         page,
