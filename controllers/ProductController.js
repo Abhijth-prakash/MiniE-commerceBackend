@@ -46,14 +46,24 @@ const HomePage = async (req, res) => {
 
 const AddProducts = async (req,res)=>{
     try{
-        const Product = new Products({
-        name: req.body.name,
-        price: req.body.price,
-        category: req.body.category,
-        image: req.file.filename
-    });
+        const {name,price,category} = req.body
 
-    const ProductData =  await Product.save()
+        //validation
+        if(!name || name.trim() === "") {
+            return res.status(400).json({ message: "name is required" })
+        }
+        if(!price || isNaN(price) || price <= 0) {
+            return res.status(400).json({ message: "valid price is required" })
+        }
+        if(!category) {
+            return res.status(400).json({ message: "category is required" })
+        }
+        if(!req.file) {
+            return res.status(400).json({ message: "image is required" })
+        }
+        
+       const Product = new Products({ name, price, category, image: req.file.filename })
+       const ProductData =  await Product.save()
     res.status(201).json({message:"success",product:ProductData})
     } catch(error){
         res.status(500).json({message:error.message,})
