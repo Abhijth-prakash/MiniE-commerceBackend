@@ -15,7 +15,7 @@ db.connection()
 
 //cors confirmation
 app.use(cors({
-    origin: `${APPURL}` // your react app URL
+    origin: `${APPURL}` 
 }))
 
 //productRoutes
