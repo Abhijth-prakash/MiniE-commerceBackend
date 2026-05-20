@@ -7,14 +7,15 @@ const cors = require('cors')
 
 const app = express()
 const PORT = process.env.PORT
+const APPURL = process.env.APPURL
 
-
+//databaseconnection
 db.connection()
 
 
 //cors confirmation
 app.use(cors({
-    origin: 'http://localhost:5173' // your react app URL
+    origin: `${APPURL}` // your react app URL
 }))
 
 //productRoutes
