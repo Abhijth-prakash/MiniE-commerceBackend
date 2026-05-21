@@ -17,6 +17,10 @@ app.use(cors({
     origin: `${APPURL}` 
 }))
 
+//middilewares
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
 //productRoutes
 const ProductRoutes = require("./routes/ProductRoutes")
 app.use("/",ProductRoutes)

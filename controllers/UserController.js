@@ -11,7 +11,6 @@ const register = async (req,res)=>{
     if(duplicate){
          return res.status(409).json({message:"email is already registred "})
     }
-
         const salt = await bcrypt.genSalt(10)
         const hashpassword = await bcrypt.hash(password,salt)
         const newUser = new User({name,email,password:hashpassword})
@@ -19,6 +18,7 @@ const register = async (req,res)=>{
         return res.status(201).json({message:"success"})
     
     }catch(error){
+        console.log(error)
         return res.status(500).json({message:"something went wrong"})
     }
     
