@@ -1,7 +1,6 @@
 const express = require('express')
 const db = require('./db/mongodb')
 require('dotenv').config();
-const Products = require('./models/productModel')
 const cors = require('cors')
 
 
@@ -19,8 +18,8 @@ app.use(cors({
 }))
 
 //productRoutes
-const ProoductRoutes = require("./routes/ProductRoutes")
-app.use("/",ProoductRoutes)
+const ProductRoutes = require("./routes/ProductRoutes")
+app.use("/",ProductRoutes)
 
 //userRoutes
 const UserRoutes = require("./routes/UserRoutes")

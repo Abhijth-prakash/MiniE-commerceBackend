@@ -13,6 +13,7 @@ const HomePage = async (req, res) => {
         let sort = req.query.sort
         let skip = (page -1) * limit
 
+        
         const query = {}
         if(search) query.name = { $regex: search, $options: 'i' }
         if(filter) query.category = filter
