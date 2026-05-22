@@ -24,7 +24,34 @@ const register = async (req,res)=>{
     
 }
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    const user = await User.findOne({ email })
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" })
+    }
+
+    const match = await bcrypt.compare(password, user.password)
+
+    if (!match) {
+      return res.status(400).json({ message: "Invalid email or password" })
+    }
+
+    //removing password from the user object we dont want the password on the front end
+    const { password: _, ...safeUser } = user.toObject()
+
+    return res.status(200).json({ message: "Login successful", user: safeUser })
+
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong" })
+  }
+}
+
 module.exports={
-    register
+    register,
+    login
 }
 
