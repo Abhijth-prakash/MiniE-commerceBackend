@@ -3,6 +3,9 @@ const bcrypt = require('bcrypt')
 require('dotenv').config()
 const jwt = require("jsonwebtoken")
 
+
+
+
 const register = async (req,res)=>{
 
     //desturcting data
@@ -21,7 +24,7 @@ const register = async (req,res)=>{
         //hashing password
         const salt = await bcrypt.genSalt(10)
         const hashpassword = await bcrypt.hash(password,salt)
-        
+
         //saving the user
         const newUser = new User({name,email,password:hashpassword})
         await newUser.save()
@@ -33,6 +36,9 @@ const register = async (req,res)=>{
     }
     
 }
+
+
+
 
 const login = async (req, res) => {
   try {
@@ -84,8 +90,24 @@ const login = async (req, res) => {
   }
 }
 
+
+const userProfile = async (req,res)=>{
+    try{
+        const {id} = req.user
+        const safeUser =  await User.findById(id).select("-password")
+        if(!safeUser){
+           return res.status(400).json({message:"please login"})
+        }
+        return res.status(200).json({message:"user verified details",user:safeUser})
+
+    }catch(error){
+       return res.status(500).json({message:"something went wrong"})
+    }
+}
+
 module.exports={
     register,
-    login
+    login,
+    userProfile
 }
 

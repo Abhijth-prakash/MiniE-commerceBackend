@@ -1,7 +1,7 @@
 // middleware/auth.js
 const jwt = require("jsonwebtoken")
 
-const verifyUser = (req, res, next) => {
+const verifyUser =  (req, res, next) => {
     const token = req.cookies.token
 
     if (!token) {

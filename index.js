@@ -16,7 +16,8 @@ db.connection()
 
 //cors confirmation
 app.use(cors({
-    origin: `${APPURL}` 
+    origin: `${APPURL}` ,
+     credentials: true    
 }))
 
 //middilewares
