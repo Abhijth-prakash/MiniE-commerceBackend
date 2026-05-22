@@ -23,6 +23,7 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use('/public/productImages', express.static('public/productImages'))
 
 //productRoutes
 const ProductRoutes = require("./routes/ProductRoutes")

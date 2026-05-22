@@ -12,7 +12,8 @@ const register = async (req,res)=>{
         //checking for empty
         if(!name||!email||!password){
         return res.status(400).json({message:"invalid credentials"})
-    }//checking duplicate email
+    }
+    //checking duplicate email
     const duplicate = await User.findOne({email})
     if(duplicate){
          return res.status(409).json({message:"email is already registred "})
@@ -20,6 +21,7 @@ const register = async (req,res)=>{
         //hashing password
         const salt = await bcrypt.genSalt(10)
         const hashpassword = await bcrypt.hash(password,salt)
+        
         //saving the user
         const newUser = new User({name,email,password:hashpassword})
         await newUser.save()

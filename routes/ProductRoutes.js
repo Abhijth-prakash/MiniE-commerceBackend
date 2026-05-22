@@ -1,14 +1,14 @@
 const express = require('express')
-const ProductRoutes = express()
+const ProductRoutes = express.Router()
 const ProductController = require("../controllers/ProductController");
 const upload = require('../multer/multerConfig')
+const {verifyUser,verifyAdmin} = require('../middilewares/auth')
 
 
-//setting static folder for images
-ProductRoutes.use('/public/productImages', express.static('public/productImages'))
 
-ProductRoutes.get("/",ProductController.HomePage)
-ProductRoutes.post("/add",upload.single('image'),ProductController.AddProducts)
+//routes
+ProductRoutes.get("/",verifyUser,ProductController.HomePage)
+ProductRoutes.post("/add",verifyAdmin,upload.single('image'),ProductController.AddProducts)
 
 
 
