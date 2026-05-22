@@ -7,6 +7,8 @@ const cors = require('cors')
 const app = express()
 const PORT = process.env.PORT
 const APPURL = process.env.APPURL
+const cookieParser = require("cookie-parser")
+
 
 //databaseconnection
 db.connection()
@@ -20,6 +22,7 @@ app.use(cors({
 //middilewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 //productRoutes
 const ProductRoutes = require("./routes/ProductRoutes")

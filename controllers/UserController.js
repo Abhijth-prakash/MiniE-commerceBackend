@@ -1,18 +1,26 @@
 const User = require("../models/userModel")
 const bcrypt = require('bcrypt')
+require('dotenv').config()
+const jwt = require("jsonwebtoken")
 
 const register = async (req,res)=>{
+
+    //desturcting data
     const {name,email,password} = req.body
     try{
+
+        //checking for empty
         if(!name||!email||!password){
         return res.status(400).json({message:"invalid credentials"})
-    }
+    }//checking duplicate email
     const duplicate = await User.findOne({email})
     if(duplicate){
          return res.status(409).json({message:"email is already registred "})
-    }
+    }   
+        //hashing password
         const salt = await bcrypt.genSalt(10)
         const hashpassword = await bcrypt.hash(password,salt)
+        //saving the user
         const newUser = new User({name,email,password:hashpassword})
         await newUser.save()
         return res.status(201).json({message:"success"})
@@ -26,16 +34,21 @@ const register = async (req,res)=>{
 
 const login = async (req, res) => {
   try {
+    //destructing data
     const { email, password } = req.body
 
+    //finding user details
     const user = await User.findOne({ email })
 
+    // if the user doesnt exists
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" })
     }
 
+    //mathcing the passwords
     const match = await bcrypt.compare(password, user.password)
 
+    // if password is wrong
     if (!match) {
       return res.status(400).json({ message: "Invalid email or password" })
     }
@@ -43,6 +56,25 @@ const login = async (req, res) => {
     //removing password from the user object we dont want the password on the front end
     const { password: _, ...safeUser } = user.toObject()
 
+    //creating jwt token
+    const token = jwt.sign(
+    {
+        id: user._id,
+        name: user.name,
+        admin: user.admin
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "7d"
+    }
+)
+
+        //storing jwt in cookie
+       res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict"
+    })
     return res.status(200).json({ message: "Login successful", user: safeUser })
 
   } catch (error) {
