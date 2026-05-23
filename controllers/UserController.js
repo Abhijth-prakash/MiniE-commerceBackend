@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 
 
 
-
+//user registration
 const register = async (req,res)=>{
 
     //desturcting data
@@ -39,7 +39,7 @@ const register = async (req,res)=>{
 
 
 
-
+//user login
 const login = async (req, res) => {
   try {
     //destructing data
@@ -91,6 +91,7 @@ const login = async (req, res) => {
 }
 
 
+//user profile
 const userProfile = async (req,res)=>{
     try{
         const {id} = req.user
@@ -105,9 +106,22 @@ const userProfile = async (req,res)=>{
     }
 }
 
+
+//user logout
+const logout = async (req,res)=>{
+    try{
+         res.clearCookie("token")
+         return res.status(200).json({message:"logout succesfully"})
+        
+    }catch(error){
+        return res.status(500).json({message:"something went wrong"})
+    }
+}
+
 module.exports={
     register,
     login,
-    userProfile
+    userProfile,
+    logout
 }
 
