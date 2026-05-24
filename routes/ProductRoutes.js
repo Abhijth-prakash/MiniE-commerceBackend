@@ -8,7 +8,8 @@ const {verifyUser,verifyAdmin} = require('../middilewares/auth')
 
 //routes
 ProductRoutes.get("/",verifyUser,ProductController.HomePage)
-ProductRoutes.post("/add",verifyAdmin,upload.single('image'),ProductController.AddProducts)
+ProductRoutes.post("/product/add",verifyAdmin,upload.single('image'),ProductController.AddProducts)
+ProductRoutes.delete("/product",verifyAdmin,ProductController.deleteProduct)
 
 
 

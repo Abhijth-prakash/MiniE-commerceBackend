@@ -39,7 +39,7 @@ const HomePage = async (req, res) => {
         total
     } })  
     } catch (error) {
-        res.status(500).json({ message: error.message })
+       return res.status(500).json({ message: "server error" })
     }
 }
 
@@ -67,13 +67,32 @@ const AddProducts = async (req,res)=>{
        const ProductData =  await Product.save()
     res.status(201).json({message:"success",product:ProductData})
     } catch(error){
-        res.status(500).json({message:error.message,})
+        return res.status(500).json({message:"server error",})
     }
 
 }
 
 
+//deleting product
+const deleteProduct = async (req,res)=>{
+    try{
+        const {id} = req.query
+        const product = await Products.findById(id)
+        if(!product){
+            return res.status(400).json({message:"product doesnt exist"})
+        }
+        await Products.findByIdAndDelete(id)
+        const productdata = await Products.find({})
+        return res.status(200).json({message:"product deleted succesfully",product:productdata})
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({message:"server error"})
+    }
+}
+
+
 module.exports ={
     HomePage,
-    AddProducts
+    AddProducts,
+    deleteProduct
 }
