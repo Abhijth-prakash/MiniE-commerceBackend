@@ -91,8 +91,42 @@ const deleteProduct = async (req,res)=>{
 }
 
 
+//upadting product
+const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.query
+        const { name, price, category } = req.body
+
+        if (!name) {
+            return res.status(400).json({ message: "name is required" })
+        }
+        if (!price || isNaN(price) || price <= 0) {
+            return res.status(400).json({ message: "price is required" })
+        }
+        if (!category) {
+            return res.status(400).json({ message: "category is required" })
+        }
+
+        await Products.findByIdAndUpdate(id, {
+            $set: {
+                name,
+                price,
+                category,
+                ...(req.file && { image: req.file.filename })
+            }
+        })
+
+        const productdata = await Products.find({})
+        return res.status(200).json({ message: "product successfully updated", product: productdata })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "server error" })
+    }
+}
+
 module.exports ={
     HomePage,
     AddProducts,
-    deleteProduct
+    deleteProduct,
+    updateProduct
 }
