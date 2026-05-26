@@ -129,20 +129,31 @@ const AddtoCart = async (req,res)=>{
     try{
         const {id} = req.user
         const {productId} = req.body
-    
-   const existUser = await Cart.findOne({ user: id })
 
-if(existUser){
-    existUser.products.push({ product: productId })
-    await existUser.save()
-}else{
-    const newItem = new Cart({
-        user: id,
-        products: [{ product: productId }]
-    })
-    await newItem.save()
-}
-    return res.status(201).json({message:"item added to cart"})
+        const existUser = await Cart.findOne({ user: id })
+
+        if(existUser){
+            const existProduct = await existUser.products.find(
+                item => item.product.toString() === productId
+            )
+
+            if(existProduct){
+                existProduct.quantity += 1
+            } else {
+                existUser.products.push({ product: productId })
+            }
+
+            await existUser.save()
+        }else{
+            const newItem = new Cart({
+                user: id,
+                products: [{ product: productId }]
+            })
+
+            await newItem.save()
+        }
+
+        return res.status(201).json({message:"item added to cart"})
     }catch(error){
         console.log(error)
         return res.status(500).json({message:"server error"})
@@ -168,11 +179,48 @@ const deleteCart = async (req,res) =>{
         
         const deleteProduct = await Cart.updateOne({ user: id },
         { $pull: { products: { product: productId } } })
-        return res.status(200).json({message:"deleted successfully"})
+        const cartData = await Cart.findOne({ user: id }).populate("products.product")
+        const products = cartData.products
+        return res.status(200).json({message:"deleted successfully",products})
 
     }catch(error){
         console.log(error)
         return res.status(500).json({message:"server error"})
+    }
+}
+
+//changingqt
+const changequanity = async (req, res) => {
+    try {
+        const { id } = req.user
+        const { productId, quantity } = req.body
+
+        const existUser = await Cart.findOne({ user: id })
+
+        if (!existUser) {
+            return res.status(404).json({ message: "Cart not found" })
+        }
+
+        const existProduct = await existUser.products.find(
+            item => item.product.toString() === productId
+        )
+
+        if (!existProduct) {
+            return res.status(404).json({ message: "Product not found" })
+        }
+
+        existProduct.quantity = quantity
+
+        await existUser.save()
+        await existUser.populate("products.product")
+
+        return res.status(200).json({
+            message: "Quantity updated", product: existUser.products
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "server error" })
     }
 }
 
@@ -183,5 +231,7 @@ module.exports ={
     deleteProduct,
     updateProduct,
     AddtoCart,
-    getCartitems
+    getCartitems,
+    deleteCart,
+    changequanity
 }
