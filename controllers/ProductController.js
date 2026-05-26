@@ -124,6 +124,20 @@ const updateProduct = async (req, res) => {
     }
 }
 
+//adding to cart
+
+const AddtoCart = async ()=>{
+    try{
+        const {userid} = req.query
+
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({message:"server error"})
+    }
+}
+
+
+
 module.exports ={
     HomePage,
     AddProducts,
