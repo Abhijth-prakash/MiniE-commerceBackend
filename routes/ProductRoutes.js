@@ -13,6 +13,7 @@ ProductRoutes.delete("/product",verifyAdmin,ProductController.deleteProduct)
 ProductRoutes.patch("/product",verifyAdmin,upload.single('image'),ProductController.updateProduct)
 ProductRoutes.get("/product/cart",verifyUser,ProductController.getCartitems)
 ProductRoutes.post("/product/cart",verifyUser,ProductController.AddtoCart)
+ProductRoutes.delete("/product/cart",verifyUser,ProductController.AddtoCart)
 
 
 

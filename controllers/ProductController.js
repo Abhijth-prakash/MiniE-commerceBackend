@@ -125,7 +125,6 @@ const updateProduct = async (req, res) => {
 }
 
 //adding to cart
-
 const AddtoCart = async (req,res)=>{
     try{
         const {id} = req.user
@@ -151,8 +150,6 @@ if(existUser){
 }
 
 // get cart items
-
-
 const getCartitems = async (req,res)=>{
     try{
         const {id} = req.user
@@ -164,6 +161,20 @@ const getCartitems = async (req,res)=>{
     }
 }
 
+const deleteCart = async (req,res) =>{
+    try{
+        const {id} = req.user
+        const {productId} = req.query
+        
+        const deleteProduct = await Cart.updateOne({ user: id },
+        { $pull: { products: { product: productId } } })
+        return res.status(200).json({message:"deleted successfully"})
+
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({message:"server error"})
+    }
+}
 
 
 module.exports ={
