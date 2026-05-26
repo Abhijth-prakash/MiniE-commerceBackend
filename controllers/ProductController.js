@@ -1,5 +1,5 @@
 const Products = require('../models/productModel')
-
+const Cart = require('../models/cartModel')
 
 //this is the home page
 const HomePage = async (req, res) => {
@@ -126,12 +126,40 @@ const updateProduct = async (req, res) => {
 
 //adding to cart
 
-const AddtoCart = async ()=>{
+const AddtoCart = async (req,res)=>{
     try{
-        const {userid} = req.query
+        const {id} = req.user
+        const {productId} = req.body
+    
+   const existUser = await Cart.findOne({ user: id })
 
+if(existUser){
+    existUser.products.push({ product: productId })
+    await existUser.save()
+}else{
+    const newItem = new Cart({
+        user: id,
+        products: [{ product: productId }]
+    })
+    await newItem.save()
+}
+    return res.status(201).json({message:"item added to cart"})
     }catch(error){
         console.log(error)
+        return res.status(500).json({message:"server error"})
+    }
+}
+
+// get cart items
+
+
+const getCartitems = async (req,res)=>{
+    try{
+        const {id} = req.user
+        const cartData = await Cart.findOne({ user: id }).populate("products.product")
+        const products = cartData.products
+        return res.status(200).json({message:"fetched items",products})
+    }catch(error){
         return res.status(500).json({message:"server error"})
     }
 }
@@ -142,5 +170,7 @@ module.exports ={
     HomePage,
     AddProducts,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    AddtoCart,
+    getCartitems
 }
