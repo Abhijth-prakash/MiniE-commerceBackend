@@ -172,6 +172,8 @@ const getCartitems = async (req,res)=>{
     }
 }
 
+
+//delete from cart
 const deleteCart = async (req,res) =>{
     try{
         const {id} = req.user
@@ -225,6 +227,26 @@ const changequanity = async (req, res) => {
 }
 
 
+//dispatch
+const dispatchProducts = async (req,res)=>{
+    try{
+        const {id} = req.user
+        const userCart = await  Cart.findOne({ user: id })
+
+        if(!userCart){
+            return res.status(404).json({message:"user cart not found"})
+        }
+
+        userCart.products = []
+        await userCart.save()
+        return res.status(200).json({message:"all products deleted"})
+
+
+    }catch(error){
+        return res.status(500).json({message:"server error"})
+    }
+}
+
 module.exports ={
     HomePage,
     AddProducts,
@@ -233,5 +255,6 @@ module.exports ={
     AddtoCart,
     getCartitems,
     deleteCart,
-    changequanity
+    changequanity,
+    dispatchProducts
 }
