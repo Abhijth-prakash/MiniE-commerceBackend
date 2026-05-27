@@ -37,7 +37,7 @@ const register = async (req,res)=>{
     
     }catch(error){
         console.log(error)
-        return res.status(500).json({message:"something went wrong"})
+        return res.status(500).json({message:"something  went wrong"})
     }
     
 }
@@ -83,16 +83,15 @@ const login = async (req, res) => {
 )
 
         //storing jwt in cookie
-res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000
-})
+       res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict"
+    })
     return res.status(200).json({ message: "Login successful", user: safeUser })
 
   } catch (error) {
-    return res.status(500).json({ message: "Something went wrong" })
+    return res.status(500).json({ message: "Something  went wrong" })
   }
 }
 
@@ -108,7 +107,8 @@ const userProfile = async (req,res)=>{
         return res.status(200).json({message:"user verified details",user:safeUser})
 
     }catch(error){
-       return res.status(500).json({message:"something went wrong"})
+        console.log(error)
+       return res.status(500).json({message:"something  went wrong"})
     }
 }
 

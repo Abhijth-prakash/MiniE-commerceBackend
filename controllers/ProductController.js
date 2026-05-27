@@ -169,17 +169,21 @@ const AddtoCart = async (req,res)=>{
 const getCartitems = async (req,res)=>{
     try{
         const {id} = req.user
-        const cartData = await Cart.findOne({ user: id }).populate("products.product")
-        const products = cartData.products
+      const cartData = await Cart.findOne({ user: id }).populate("products.product")
 
-        if (!cartData) {
+if (!cartData) {
     return res.status(200).json({
         message: "Cart is empty",
         products: []
     })
 }
 
-        return res.status(200).json({message:"fetched items",products})
+const products = cartData.products
+
+return res.status(200).json({
+    message: "fetched items",
+    products
+})
     }catch(error){
         return res.status(500).json({message:"server error"})
     }
@@ -260,6 +264,33 @@ const dispatchProducts = async (req,res)=>{
     }
 }
 
+
+//getproductdetails
+
+const getProduct = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const product = await Products.findById(id)
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Product fetched",
+            product
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
 module.exports ={
     HomePage,
     AddProducts,
@@ -269,5 +300,6 @@ module.exports ={
     getCartitems,
     deleteCart,
     changequanity,
-    dispatchProducts
+    dispatchProducts,
+    getProduct
 }
