@@ -16,6 +16,11 @@ const register = async (req,res)=>{
         if(!name||!email||!password){
         return res.status(400).json({message:"invalid credentials"})
     }
+    if(password.length < 4){
+    return res.status(400).json({
+        message:"Password must be at least 4 characters"
+    })
+}
     //checking duplicate email
     const duplicate = await User.findOne({email})
     if(duplicate){
@@ -78,11 +83,12 @@ const login = async (req, res) => {
 )
 
         //storing jwt in cookie
-       res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict"
-    })
+res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+})
     return res.status(200).json({ message: "Login successful", user: safeUser })
 
   } catch (error) {

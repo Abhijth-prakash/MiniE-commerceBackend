@@ -62,6 +62,11 @@ const AddProducts = async (req,res)=>{
         if(!req.file) {
             return res.status(400).json({ message: "image is required" })
         }
+
+        const existName = await Products.findOne({name})
+        if(existName){
+            return res.status(400).json({message: "name already exists"})
+        }
         
        const Product = new Products({ name, price, category, image: req.file.filename })
        const ProductData =  await Product.save()
@@ -166,6 +171,14 @@ const getCartitems = async (req,res)=>{
         const {id} = req.user
         const cartData = await Cart.findOne({ user: id }).populate("products.product")
         const products = cartData.products
+
+        if (!cartData) {
+    return res.status(200).json({
+        message: "Cart is empty",
+        products: []
+    })
+}
+
         return res.status(200).json({message:"fetched items",products})
     }catch(error){
         return res.status(500).json({message:"server error"})
