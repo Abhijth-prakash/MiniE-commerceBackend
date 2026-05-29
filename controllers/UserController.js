@@ -47,6 +47,7 @@ const register = async (req,res)=>{
 //user login
 const login = async (req, res) => {
   try {
+    console.log("user is try to connect via mobile")
     //destructing data
     const { email, password } = req.body
 
