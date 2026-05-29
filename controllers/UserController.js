@@ -85,8 +85,8 @@ const login = async (req, res) => {
         //storing jwt in cookie
        res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict"
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     })
     return res.status(200).json({ message: "Login successful", user: safeUser })
 
