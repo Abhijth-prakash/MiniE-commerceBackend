@@ -45,36 +45,66 @@ const HomePage = async (req, res) => {
 
 //this is the add products page
 
-const AddProducts = async (req,res)=>{
-    try{
-        const {name,price,category} = req.body
+const AddProducts = async (req, res) => {
+    try {
+        const { name, price, category, description, rating } = req.body
 
-        //validation
-        if(!name || name.trim() === "") {
+        if (!name || name.trim() === "") {
             return res.status(400).json({ message: "name is required" })
         }
-        if(!price || isNaN(price) || price <= 0) {
+
+        if (!price || isNaN(price) || Number(price) <= 0) {
             return res.status(400).json({ message: "valid price is required" })
         }
-        if(!category) {
+
+        if (!category || typeof category !== "string") {
             return res.status(400).json({ message: "category is required" })
         }
-        if(!req.file) {
+
+        if (!description || typeof description !== "string") {
+            return res.status(400).json({ message: "description is required" })
+        }
+
+        if (!rating || isNaN(rating)) {
+            return res.status(400).json({ message: "valid rating is required" })
+        }
+
+        if (Number(rating) < 1 || Number(rating) > 5) {
+            return res.status(400).json({ message: "rating must be between 1 and 5" })
+        }
+
+        if (!req.file) {
             return res.status(400).json({ message: "image is required" })
         }
 
-        const existName = await Products.findOne({name})
-        if(existName){
-            return res.status(400).json({message: "name already exists"})
-        }
-        
-       const Product = new Products({ name, price, category, image: req.file.filename })
-       const ProductData =  await Product.save()
-    res.status(201).json({message:"success",product:ProductData})
-    } catch(error){
-        return res.status(500).json({message:"server error",})
-    }
+        const existName = await Products.findOne({ name })
 
+        if (existName) {
+            return res.status(400).json({ message: "name already exists" })
+        }
+
+        const Product = new Products({
+        name: name.trim(),
+        category: category.trim(),
+        description: description.trim(),
+        rating: Number(rating),
+        price,
+       image: req.file.filename
+       })
+
+        const ProductData = await Product.save()
+
+        return res.status(201).json({
+            message: "success",
+            product: ProductData
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "server error"
+        })
+    }
 }
 
 
@@ -100,25 +130,41 @@ const deleteProduct = async (req,res)=>{
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.query
-        const { name, price, category } = req.body
+        const { name, price, category, description, rating } = req.body
 
-        if (!name) {
+        if (!name || name.trim() === "") {
             return res.status(400).json({ message: "name is required" })
         }
-        if (!price || isNaN(price) || price <= 0) {
-            return res.status(400).json({ message: "price is required" })
+
+        if (!price || isNaN(price) || Number(price) <= 0) {
+            return res.status(400).json({ message: "valid price is required" })
         }
-        if (!category) {
+
+        if (!category || typeof category !== "string") {
             return res.status(400).json({ message: "category is required" })
         }
 
+        if (!description || typeof description !== "string") {
+            return res.status(400).json({ message: "description is required" })
+        }
+
+        if (!rating || isNaN(rating)) {
+            return res.status(400).json({ message: "valid rating is required" })
+        }
+
+        if (Number(rating) < 1 || Number(rating) > 5) {
+            return res.status(400).json({ message: "rating must be between 1 and 5" })
+        }
+
         await Products.findByIdAndUpdate(id, {
-            $set: {
-                name,
-                price,
-                category,
-                ...(req.file && { image: req.file.filename })
-            }
+             $set: {
+                 name,
+                 price,
+                 category,
+                 description,
+                 rating: Number(rating),
+        ...(req.file && { image: req.file.filename })
+                 }
         })
 
         const productdata = await Products.find({})
