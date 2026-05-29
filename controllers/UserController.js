@@ -47,13 +47,11 @@ const register = async (req,res)=>{
 //user login
 const login = async (req, res) => {
   try {
-    console.log("user is try to connect via mobile",req.body)
     //destructing data
     const { email, password } = req.body
 
     //finding user details
     const user = await User.findOne({ email })
-    console.log(user)
     // if the user doesnt exists
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" })
@@ -89,7 +87,6 @@ const login = async (req, res) => {
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     })
-    console.log("user succeflly logined")
     return res.status(200).json({ message: "Login successful", user: safeUser })
 
   } catch (error) {
