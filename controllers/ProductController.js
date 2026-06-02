@@ -1,5 +1,6 @@
 const Products = require('../models/productModel')
 const Cart = require('../models/cartModel')
+const { uploadFile } = require('../config/cloudinary');
 
 //this is the home page
 const HomePage = async (req, res) => {
@@ -75,8 +76,9 @@ const AddProducts = async (req, res) => {
 
         if (!req.file) {
             return res.status(400).json({ message: "image is required" })
-        }
-
+        }   
+        
+        const uploadResult = await uploadFile(req.file.path);
         const existName = await Products.findOne({ name })
 
         if (existName) {
@@ -89,7 +91,7 @@ const AddProducts = async (req, res) => {
         description: description.trim(),
         rating: Number(rating),
         price,
-       image: req.file.filename
+        image: uploadResult.secure_url
        })
 
         const ProductData = await Product.save()

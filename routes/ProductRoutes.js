@@ -1,8 +1,10 @@
 const express = require('express')
 const ProductRoutes = express.Router()
 const ProductController = require("../controllers/ProductController");
-const upload = require('../multer/multerConfig')
+const upload = require('../config/multerConfig')
 const {verifyUser,verifyAdmin} = require('../middilewares/auth')
+require('dotenv').config();
+
 
 
 
